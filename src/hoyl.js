@@ -28,7 +28,7 @@ function replace(textNode)
 {
 	var payPerHour = 11.75;
 	textNode.nodeValue = textNode.nodeValue.
-		replace(/([$€£][0-9]+)\.[0-9]{2}/gi, 
+		replace(/([$][0-9]+)\.[0-9]{2}/gi, 
 			function convert(x){
 				return Math.round((x.substring(1)/payPerHour)*100)/100 + " HOYL";
 			});
