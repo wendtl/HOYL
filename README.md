@@ -1,4 +1,4 @@
-Price to Time Replacement
+HOYL: Hours of Your Life
 =====================
 
 Input your hourly wage* and know how much of your life your purchases are costing you.
