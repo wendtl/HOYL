@@ -1,0 +1,19 @@
+{
+	"manifest_version": 2,
+	"name": "HOYL: Money-to-Time Converter",
+	"description": "Cut out the middleman. Know how many hours of your life things will cost you based on your hourly wage.",
+	"version": "1.0",
+	"browser_action": {
+		"default_title": "HOYL: Hours Of Your Life",
+		"default_popup": "popup.html"
+	},
+	"content_scripts": 
+	[
+		{
+			"matches": ["*://*/*"],
+			"exclude_matches": ["*://localhost/*"],
+			"js": ["hoyl.js"],
+			"run_at": "document_end"
+		}
+	]
+}
