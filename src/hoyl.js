@@ -1,7 +1,18 @@
-walk(document.body);
+var payPerHour = null;
 
-function walk(node) 
-{
+// Get the wage we will be using for our calculations
+chrome.runtime.sendMessage({requestedData: "wage"}, function(response) {
+	setHourlyWage(response.wage)
+	walk(document.body);
+});
+
+// Helper function to set the global wage variable
+function setHourlyWage(wage) {
+	this.payPerHour = wage;
+}
+
+// Traverse the DOM for Text Nodes to call replace() on 
+function walk(node) {
 	// I stole this function from here:
 	// http://is.gd/mwZp7E
 	var child, next;
@@ -19,14 +30,15 @@ function walk(node)
 				}
 			break;
 		case 3: // Text node
-			replace(node);
+			if(payPerHour != null) {
+				replace(node);
+			}
 			break;
 		}
 }
 
-function replace(textNode) 
-{
-	var payPerHour = 11.75;
+// Replace any units of money with HOYL
+function replace(textNode) {
 	textNode.nodeValue = textNode.nodeValue.
 		replace(/([$][0-9]+)\.[0-9]{2}/gi, 
 			function convert(x){
