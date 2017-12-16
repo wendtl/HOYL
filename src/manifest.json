@@ -22,7 +22,8 @@
 		}
 	],
 	"background": {
-		"scripts": ["background.js"]
+		"scripts": ["background.js"],
+		"persistent": true
 	},
 	"icons": {
 		"16": "icon16.png",

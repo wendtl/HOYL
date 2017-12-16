@@ -1,9 +1,15 @@
+/*
+* The file that gets spawned for each open tab. This does the actual text replacement.
+*/
+
 var payPerHour = null;
 
 // Get the wage we will be using for our calculations
 chrome.runtime.sendMessage({requestedData: "wage"}, function(response) {
-	setHourlyWage(response.wage)
-	walk(document.body);
+	setHourlyWage(response.wage);
+	if( response.extensionEnabled ) {
+		walk(document.body);
+	}
 });
 
 // Helper function to set the global wage variable
