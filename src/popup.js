@@ -5,7 +5,12 @@ var extensionEnabled = true;
 // Populate fields in popup from locally saved data
 window.onload = function() {
 	chrome.storage.local.get(["hourlyWage"], function(items){
-		document.getElementById('hourlyWage').value = items["hourlyWage"];
+		var wageValue = items["hourlyWage"];
+		if( wageValue == undefined ) {
+			document.getElementById('hourlyWage').value = "Enter hourly wage";
+		} else {
+			document.getElementById('hourlyWage').value = wageValue;
+		}
 		toggleExtension();
 	});
 	document.getElementById('extensionToggle').checked = backgroundPage.extensionEnabled;
