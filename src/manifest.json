@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "HOYL: Hours of Your Life",
 	"short_name": "HOYL",
-	"description": "Cut out the middleman. Know how many hours of your life things will cost you based on your hourly wage.",
+	"description": "Know exactly how many hours of work your purchases are costing you.",
 	"version": "1.1",
 	"permissions": [
 		"tabs", "<all_urls>", "storage"

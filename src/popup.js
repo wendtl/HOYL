@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 });
 
-// onClick listener for this extensions enable/disable button
+// onClick listener for HOYL's enable/disable toggle
 document.addEventListener('DOMContentLoaded', function() {
 	var link = document.getElementById('extensionToggle');
 	link.addEventListener('click', function() {

@@ -46,7 +46,7 @@ function walk(node) {
 // Replace any units of money with HOYL
 function replace(textNode) {
 	textNode.nodeValue = textNode.nodeValue.
-		replace(/([$][0-9]+)\.[0-9]{2}/gi, 
+		replace(/([$][0-9]+)\,*[0-9]*(\.[0-9][0-9])?/gi, 
 			function convert(x){
 				return Math.round((x.substring(1)/payPerHour)*100)/100 + " HOYL";
 			});
