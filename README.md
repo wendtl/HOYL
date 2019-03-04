@@ -10,3 +10,4 @@ TODO:
 - Tab between hourly and salaried in popup.html
 - Better styling for popup.html
 - Sync wage storage with cloud (chrome.storage.sync)
+- Immediate page change when extension is switched on/off
