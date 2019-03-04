@@ -5,7 +5,7 @@
 */
 
 var extensionEnabled = true;
-var hourlyWage;
+var hourlyWage = getHourlyWage();
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {

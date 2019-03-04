@@ -1,12 +1,18 @@
+/*
+ * The popup window that is displayed when a user clicks on the extension in the toolbar
+ */
+
 const backgroundPage = chrome.extension.getBackgroundPage();
 
 // Populate fields in popup from locally saved data
 window.onload = function() {
 	chrome.storage.local.get(["wage"], function(items){
 		var wageValue = items["wage"];
-		if(wageValue !== undefined && wageValue !== null) {
-			document.getElementById('hourlyWage').value = wageValue;
-		}
+		if(wageValue !== undefined && wageValue !== null && wageValue !== 0) {
+      hideForm();
+		} else {
+      showForm();
+    }
 		setExtensionEnabledState();
 	});
 	document.getElementById('extensionToggle').checked = backgroundPage.extensionEnabled;
@@ -23,37 +29,58 @@ function setExtensionEnabledState() {
 	backgroundPage.extensionEnabled = document.getElementById('extensionToggle').checked;
 }
 
+
+function clearForm() {
+	document.getElementById('hourlyWage').value = "";
+  document.getElementById('salariedWage').value = "";
+  document.getElementById('hoursPerWeek').value = "";
+}
+
+function hideForm() {
+  document.getElementById('wageForm').style.display = "none";
+  document.getElementById('extensionState').innerHTML = "wage is set and extension is active!";
+  document.getElementById('button').innerHTML = "Set New Wage";
+}
+
+function showForm() {
+  document.getElementById('wageForm').style.display = "block";
+  document.getElementById('extensionState').innerHTML = "enter wage to enable extension";
+  document.getElementById('button').innerHTML = "Confirm";
+}
+
 function getComputedHourlyWage() {
-  var hourlyWage;
+  let hourlyWage;
 
-	var hourlyWageField = document.getElementById('hourlyWage');
-  var salariedWageField = document.getElementById('salariedWage');
-  var hoursPerWeekField = document.getElementById('hoursPerWeek');
-
+	let hourlyWageField = document.getElementById('hourlyWage');
   if(hourlyWageField.value) {
     hourlyWage = hourlyWageField.value;
   } else {
+    let salariedWageField = document.getElementById('salariedWage');
+    let hoursPerWeekField = document.getElementById('hoursPerWeek');
     hourlyWage = salariedWageField.value/(hoursPerWeekField.value * 52);
   }
-
-  hourlyWageField.value = "";
-  salariedWageField.value = "";
-  hoursPerWeekField.value = "";
 
   return hourlyWage;
 }
 
 // onClick listener for the "Set Wage" button
 document.addEventListener('DOMContentLoaded', function() {
-	var link = document.getElementById('setWageButton');
+	let link = document.getElementById('button');
 	link.addEventListener('click', function() {
-    saveWage(getComputedHourlyWage());
+
+    if(document.getElementById('wageForm').style.display === "none") {
+      showForm();
+    } else { 
+      saveWage(getComputedHourlyWage());
+      clearForm();
+      hideForm();
+    }
 	});
 });
 
 // onClick listener for HOYL's enable/disable toggle
 document.addEventListener('DOMContentLoaded', function() {
-	var link = document.getElementById('extensionToggle');
+	let link = document.getElementById('extensionToggle');
 	link.addEventListener('click', function() {
 		setExtensionEnabledState();
 	});
