@@ -1,21 +1,19 @@
 /*
-* The file that gets spawned for each open tab. This does the actual text replacement.
+* An instance of this file gets spawned for each open tab.
+* This file is responsible for the actual text replacement on the webpage.
 */
 
 var payPerHour = null;
 
 // Get the wage we will be using for our calculations
-chrome.runtime.sendMessage({requestedData: "wage"}, function(response) {
-	setHourlyWage(response.wage);
-	if( response.extensionEnabled ) {
-		walk(document.body);
-	}
+chrome.runtime.sendMessage(
+  {requestedData: "wage"},
+  function(response) {
+    this.payPerHour = response.wage;
+    if(response.extensionEnabled) {
+      walk(document.body);
+    }
 });
-
-// Helper function to set the global wage variable
-function setHourlyWage(wage) {
-	this.payPerHour = wage;
-}
 
 // Traverse the DOM for Text Nodes to call replace() on 
 function walk(node) {
@@ -37,17 +35,17 @@ function walk(node) {
 			break;
 		case 3: // Text node
 			if(payPerHour != null) {
-				replace(node);
+				replaceWithHOYL(node);
 			}
 			break;
 		}
 }
 
-// Replace any units of money with HOYL
-function replace(textNode) {
-	textNode.nodeValue = textNode.nodeValue.
-		replace(/([$][0-9]+)\,*[0-9]*(\.[0-9][0-9])?/gi, 
-			function convert(x){
-				return Math.round((x.substring(1)/payPerHour)*100)/100 + " HOYL";
-			});
+// Replaces any DOM node containing units of money with HOYL
+function replaceWithHOYL(textNode) {
+	textNode.nodeValue = textNode.nodeValue.replace(
+    /([$][0-9]+)\,*[0-9]*(\.[0-9][0-9])?/gi, 
+		function convertMoneyToHOYL(moneyAmount){
+			return Math.round((moneyAmount.substring(1)/payPerHour)*100)/100 + " HOYL";
+		});
 }

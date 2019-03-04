@@ -1,44 +1,53 @@
-var backgroundPage = chrome.extension.getBackgroundPage();
-var hourlyWage = null;
-var extensionEnabled = true;
+const backgroundPage = chrome.extension.getBackgroundPage();
 
 // Populate fields in popup from locally saved data
 window.onload = function() {
-	chrome.storage.local.get(["hourlyWage"], function(items){
-		var wageValue = items["hourlyWage"];
-		if( wageValue == undefined ) {
-			document.getElementById('hourlyWage').value = "Enter hourly wage";
-		} else {
+	chrome.storage.local.get(["wage"], function(items){
+		var wageValue = items["wage"];
+		if(wageValue !== undefined && wageValue !== null) {
 			document.getElementById('hourlyWage').value = wageValue;
 		}
-		toggleExtension();
+		setExtensionEnabledState();
 	});
 	document.getElementById('extensionToggle').checked = backgroundPage.extensionEnabled;
-	extensionEnabled = backgroundPage.extensionEnabled;
 }
 
-// Store hourly wage variable locally
-function saveWage() {
-	this.hourlyWage = document.getElementById('hourlyWage').value;
-	backgroundPage.hourlyWage = this.hourlyWage;
-	chrome.storage.local.set({ "hourlyWage": document.getElementById('hourlyWage').value }, function(){
-		console.log("Set hourly wage to " + document.getElementById('hourlyWage').value);
-	});
+// Store hourly wage variable in persistent local chrome storage
+function saveWage(wage) {
+  var hourlyWage = document.getElementById('hourlyWage').value;
+	backgroundPage.setHourlyWage(wage);
 }
 
 // Toggle the variable in background.js
-function toggleExtension() {
-	this.extensionEnabled = document.getElementById('extensionToggle').checked;
+function setExtensionEnabledState() {
 	backgroundPage.extensionEnabled = document.getElementById('extensionToggle').checked;
+}
+
+function getComputedHourlyWage() {
+  var hourlyWage;
+
+	var hourlyWageField = document.getElementById('hourlyWage');
+  var salariedWageField = document.getElementById('salariedWage');
+  var hoursPerWeekField = document.getElementById('hoursPerWeek');
+
+  if(hourlyWageField.value) {
+    hourlyWage = hourlyWageField.value;
+  } else {
+    hourlyWage = salariedWageField.value/(hoursPerWeekField.value * 52);
+  }
+
+  hourlyWageField.value = "";
+  salariedWageField.value = "";
+  hoursPerWeekField.value = "";
+
+  return hourlyWage;
 }
 
 // onClick listener for the "Set Wage" button
 document.addEventListener('DOMContentLoaded', function() {
 	var link = document.getElementById('setWageButton');
 	link.addEventListener('click', function() {
-		if(document.getElementById('hourlyWage') != null && document.getElementById('hourlyWage') != 0) {
-			saveWage();
-		}
+    saveWage(getComputedHourlyWage());
 	});
 });
 
@@ -46,6 +55,6 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
 	var link = document.getElementById('extensionToggle');
 	link.addEventListener('click', function() {
-		toggleExtension();
+		setExtensionEnabledState();
 	});
 });
