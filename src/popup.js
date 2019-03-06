@@ -8,6 +8,7 @@ const backgroundPage = chrome.extension.getBackgroundPage();
 window.onload = function() {
 	chrome.storage.local.get(["wage","enabled"], function(items){
 		var wageValue = items["wage"];
+    console.log("receieved from background page:", items);
 		if(wageValue !== undefined && wageValue !== null && wageValue !== 0) {
       hideForm();
 		} else {
@@ -70,6 +71,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let hourlyWage = getComputedHourlyWage();
     if(hourlyWage !== 0 && hourlyWage !== null && hourlyWage !== undefined && hourlyWage !== "NaN") {
+      document.getElementById('extensionToggle').checked = true
+		  setExtensionEnabledState(true);
       saveWage(hourlyWage);
       clearForm();
       hideForm();

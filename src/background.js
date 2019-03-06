@@ -34,6 +34,7 @@ function setHourlyWage(wage) {
     { "wage": wage },
     () => console.log("HOYL: hourly wage is now set to " + wage)
   );
+  this.hourlyWage = wage;
 }
 
 function setExtensionState(isEnabled) {
@@ -41,6 +42,7 @@ function setExtensionState(isEnabled) {
     { "enabled": isEnabled },
     () => console.log("HOYL: Extension is now " + (isEnabled ? "enabled" : "disabled"))
   );
+  this.extensionEnabled = isEnabled;
 }
 
 function readExtensionState() {
