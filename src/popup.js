@@ -22,6 +22,7 @@ window.onload = function() {
 function saveWage(wage) {
   var hourlyWage = document.getElementById('hourlyWage').value;
 	backgroundPage.setHourlyWage(wage);
+  console.log("HOYL: wage sent to background page");
 }
 
 // Toggle the variable in background.js
