@@ -4,13 +4,13 @@
 *  The 'wage' variable in local Chrome storage should be considered the original source, all other places wage is used should be derived from here
 */
 
-var extensionEnabled = true;
-var hourlyWage = getHourlyWage();
+var extensionEnabled = readExtensionState();
+var hourlyWage = readHourlyWage();
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     var response = {
-      "wage": getHourlyWage(),
+      "wage": this.hourlyWage,
       "extensionEnabled": this.extensionEnabled 
     };
 
@@ -19,7 +19,7 @@ chrome.runtime.onMessage.addListener(
   }
 );
 
-function getHourlyWage() {
+function readHourlyWage() {
   chrome.storage.local.get(
     ["wage"],
     function(items) {
@@ -27,19 +27,36 @@ function getHourlyWage() {
       getWageCallback(items["wage"]);
     }
   );
+}
 
-  return this.hourlyWage;
+function setHourlyWage(wage) {
+	chrome.storage.local.set(
+    { "wage": wage },
+    () => console.log("HOYL: hourly wage is now set to " + wage)
+  );
+}
+
+function setExtensionState(isEnabled) {
+	chrome.storage.local.set(
+    { "enabled": isEnabled },
+    () => console.log("HOYL: Extension is now " + (isEnabled ? "enabled" : "disabled"))
+  );
+}
+
+function readExtensionState() {
+  chrome.storage.local.get(
+    ["enabled"],
+    function(items) {
+      console.log("HOYL: extension state retrieved from Chrome storage:", items["enabled"]);
+      readExtensionStateCallback(items["enabled"]);
+    }
+  );
 }
 
 function getWageCallback(wage) {
   this.hourlyWage = wage;
 }
 
-function setHourlyWage(wage) {
-	chrome.storage.local.set(
-    { "wage": wage },
-    function logWageChange() {
-      console.log("HOYL: hourly wage is now set to " + wage);
-    }
-  );
+function readExtensionStateCallback(state) {
+  this.extensionEnabled = state;
 }

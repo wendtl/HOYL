@@ -6,30 +6,26 @@ const backgroundPage = chrome.extension.getBackgroundPage();
 
 // Populate fields in popup from locally saved data
 window.onload = function() {
-	chrome.storage.local.get(["wage"], function(items){
+	chrome.storage.local.get(["wage","enabled"], function(items){
 		var wageValue = items["wage"];
 		if(wageValue !== undefined && wageValue !== null && wageValue !== 0) {
       hideForm();
 		} else {
       showForm();
     }
-		setExtensionEnabledState();
+		document.getElementById('extensionToggle').checked = items["enabled"];
 	});
-	document.getElementById('extensionToggle').checked = backgroundPage.extensionEnabled;
 }
 
-// Store hourly wage variable in persistent local chrome storage
 function saveWage(wage) {
-  var hourlyWage = document.getElementById('hourlyWage').value;
 	backgroundPage.setHourlyWage(wage);
-  console.log("HOYL: wage sent to background page");
+  console.log("HOYL: wage sent to background page: " + wage);
 }
 
-// Toggle the variable in background.js
-function setExtensionEnabledState() {
-	backgroundPage.extensionEnabled = document.getElementById('extensionToggle').checked;
+function setExtensionEnabledState(state) {
+	backgroundPage.setExtensionState(state);
+  console.log("HOYL: new extension state sent to background page: " + state);
 }
-
 
 function clearForm() {
 	document.getElementById('hourlyWage').value = "";
@@ -64,25 +60,28 @@ function getComputedHourlyWage() {
   return hourlyWage;
 }
 
-// onClick listener for the "Set Wage" button
 document.addEventListener('DOMContentLoaded', function() {
-	let link = document.getElementById('button');
-	link.addEventListener('click', function() {
-
+	let button = document.getElementById('button');
+	button.addEventListener('click', function() {
     if(document.getElementById('wageForm').style.display === "none") {
       showForm();
-    } else { 
-      saveWage(getComputedHourlyWage());
+      return
+    }
+
+    let hourlyWage = getComputedHourlyWage();
+    if(hourlyWage !== 0 && hourlyWage !== null && hourlyWage !== undefined && hourlyWage !== "NaN") {
+      saveWage(hourlyWage);
       clearForm();
       hideForm();
+    } else {
+      document.getElementById('extensionState').innerHTML = "Numbers only. Try Again.";
     }
 	});
 });
 
-// onClick listener for HOYL's enable/disable toggle
 document.addEventListener('DOMContentLoaded', function() {
-	let link = document.getElementById('extensionToggle');
-	link.addEventListener('click', function() {
-		setExtensionEnabledState();
+	let toggle = document.getElementById('extensionToggle');
+	toggle.addEventListener('click', function() {
+		setExtensionEnabledState(toggle.checked);
 	});
 });
