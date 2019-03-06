@@ -26,12 +26,12 @@ function walk(node) {
 		case 9:  // Document
 		case 11: // Document fragment
 			child = node.firstChild;
-				while ( child ) 
-				{
-					next = child.nextSibling;
-					walk(child);
-					child = next;
-				}
+			while ( child ) 
+			{
+				next = child.nextSibling;
+				walk(child);
+				child = next;
+			}
 			break;
 		case 3: // Text node
 			if(payPerHour != null) {
